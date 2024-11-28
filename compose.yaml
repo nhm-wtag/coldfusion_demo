@@ -1,0 +1,31 @@
+services:
+  database:
+    image: mariadb:latest
+    restart: always
+    networks:
+      - app-backend
+    environment:
+      MARIADB_ROOT_PASSWORD: "admin"
+      MARIADB_USER: "admin"
+      MARIADB_PASSWORD: "admin"
+      MARIADB_DATABASE: "myDatabase"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/dump.sql
+  
+  lucee:
+    image: lucee/lucee:latest
+    build: .
+    networks:
+      - app-backend
+    environment: 
+      LUCEE_ADMIN_PASSWORD: "admin"
+    volumes:
+      - ./:/var/www
+    ports:
+      - "8888:8888"
+  
+networks:
+  app-backend:
+    driver: bridge
